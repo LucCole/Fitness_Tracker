@@ -15,6 +15,11 @@ const {
 // Tweaks
 usersRouter.post('/register', async (req, res, next) =>{
     try{
+
+
+        // does the user stuff throw an error
+
+
         const user = await createUser(req.body);
 
         const token = jwt.sign({ 
@@ -39,6 +44,8 @@ usersRouter.post('/register', async (req, res, next) =>{
 // Tweaks
 usersRouter.post('/login', async (req, res, next) =>{
     try{
+
+        // If does bnot have a user throw error
         const user = await getUser(req.body);
 
         const token = jwt.sign({ 
@@ -57,7 +64,7 @@ usersRouter.post('/login', async (req, res, next) =>{
 // Tweaks
 usersRouter.get('/me', requireUser, async (req, res, next) =>{
     try{
-        // 
+        // needs to be user
         const routines = await getUserById(req.user.id);
         res.send(routines); 
     }catch(error){

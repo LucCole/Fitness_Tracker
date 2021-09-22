@@ -17,6 +17,7 @@ async function getRoutineActivityById(id){
     }
 }
 
+// make insert query here
 async function addActivityToRoutine({ routineId, activityId, count, duration }){
     try{
 
@@ -33,7 +34,6 @@ async function addActivityToRoutine({ routineId, activityId, count, duration }){
 
         return routineActivity;
     }catch(error){
-        console.log(error)
         throw error;
     }
 }
