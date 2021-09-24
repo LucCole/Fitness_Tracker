@@ -6,10 +6,6 @@ const bcrypt = require('bcrypt')
 async function createUser({username, password}){
     try{
 
-        if(password.length < 8){
-            throw 'Passowrd is too short, it must be 8 characters or longer.';
-        }
-
         const SALT_COUNT = 10;
         const hashedPassword = await bcrypt.hash(password, SALT_COUNT);
 

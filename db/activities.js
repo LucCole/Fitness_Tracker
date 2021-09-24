@@ -1,5 +1,4 @@
 const { client } = require('./client');
-const { existingFieldsToString } = require('./utils');
 
 async function getActivityById(id){
     try{
@@ -46,19 +45,24 @@ async function createActivity({name, description}){
     }
 }
 
-// Added update only if present
 async function updateActivity({id, name, description}){
     try{
-
-        const queryParams = existingFieldsToString({name, description});
-        queryParams.values.unshift(id);
+       
+        const setArr = [];
+        if(name){
+            setArr.push(`name='${name}'`);
+        }
+        if(description){
+            setArr.push(`description='${description}'`);
+        }
+        const setStr = setArr.toString();
         
         const { rows: [ activity ] } = await client.query(`
             UPDATE activities 
-            SET ${queryParams.insert}
+            SET ${setStr}
             WHERE id=$1
             RETURNING *;
-        `, queryParams.values);
+        `, [id]);
 
         return activity;
     }catch(error){

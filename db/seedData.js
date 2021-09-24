@@ -1,6 +1,3 @@
-
-// The Database | Activities: How would we ensure that they are all lowercase? We could do it on the submit/front end, but can we also do it with postgress 
-
 const { 
     client, 
     createUser, 
@@ -24,8 +21,6 @@ async function dropTables() {
     }
 }
 
-// Add try into this
-// 1
 async function createTables() {
     try{
         await client.query(`
@@ -45,7 +40,6 @@ async function createTables() {
                 "isPublic" BOOLEAN DEFAULT false,
                 name VARCHAR(255) UNIQUE NOT NULL,
                 goal TEXT NOT NULL
-                
             );
             CREATE TABLE routine_activities(
                 id SERIAL PRIMARY KEY,

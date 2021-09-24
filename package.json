@@ -1,42 +1,25 @@
 {
   "name": "fitnesstrackr",
   "version": "1.0.0",
-  "description": "an API for our new fitness empire, FitnessTrac.kr, using node, express, and postgresql",
+  "description": "fitnesstrackr front end starter",
   "main": "index.js",
   "scripts": {
     "seed:dev": "nodemon ./db/seed.js",
     "seed": "node ./db/seed.js",
     "start:dev": "nodemon index.js",
     "start": "node index.js",
-    "test": "jest --runInBand",
-    "test:watch": "jest --watchAll --runInBand",
-    "test:watch:db": "jest --watchAll db",
-    "test:watch:api": "jest --watchAll api",
-    "start:react": "react-scripts start",
-    "build": "react-scripts build"
+    "start:client": "react-scripts start"
   },
-  "repository": {
-    "type": "git"
-  },
-  "keywords": [
-    "node",
-    "express",
-    "postgresql",
-    "javascript"
-  ],
-  "author": "Fullstack Academy",
   "devDependencies": {
-    "jest": "^26.6.0",
     "nodemon": "^2.0.4"
   },
   "dependencies": {
-    "@material-ui/core": "^4.12.3",
-    "@material-ui/icons": "^4.11.2",
     "axios": "^0.19.2",
     "bcrypt": "^4.0.1",
+    "chalk": "^4.0.0",
+    "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "faker": "^4.1.0",
     "jsonwebtoken": "^8.5.1",
     "morgan": "^1.10.0",
     "pg": "^8.2.1",
@@ -56,5 +39,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "license": "UNLICENSED"
 }

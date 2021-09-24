@@ -1,6 +1,4 @@
-// Bring this in from index
 const { client } = require('./client');
-const { existingFieldsToString } = require('./utils');
 
 async function getRoutineActivityById(id){
     try{
@@ -17,7 +15,6 @@ async function getRoutineActivityById(id){
     }
 }
 
-// make insert query here
 async function addActivityToRoutine({ routineId, activityId, count, duration }){
     try{
 
@@ -41,16 +38,21 @@ async function addActivityToRoutine({ routineId, activityId, count, duration }){
 async function updateRoutineActivity({ id, count, duration }){
     try{
 
-
-        const queryParams = existingFieldsToString({count, duration});
-        queryParams.values.unshift(id);
+        const setArr = [];
+        if(count){
+            setArr.push(`count='${count}'`);
+        }
+        if(duration){
+            setArr.push(`duration='${duration}'`);
+        }
+        const setStr = setArr.toString();
 
         const { rows: [ updatedRoutineActivity ] } = await client.query(`
             UPDATE routine_activities
-            SET ${queryParams.insert}
+            SET ${setStr}
             WHERE id=$1
             RETURNING *;
-        `, queryParams.values);
+        `, [id]);
 
         return updatedRoutineActivity;
     }catch(error){

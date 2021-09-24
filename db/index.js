@@ -3,6 +3,5 @@ module.exports = {
     ...require('./users'),
     ...require('./activities'),
     ...require('./routines'),
-    ...require('./routine_activities'),
-    ...require('./utils')
+    ...require('./routine_activities')
 };

@@ -39,7 +39,6 @@ apiRouter.get('/health', async (req, res, next) =>{
     }
 });
 
-// this one causes non critical errors
 const usersRouter = require('./users');
 apiRouter.use('/users', usersRouter);
 

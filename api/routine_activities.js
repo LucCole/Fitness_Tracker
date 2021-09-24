@@ -6,48 +6,45 @@ const {requireUser} = require('./middleware');
 const {
     updateRoutineActivity,
     destroyRoutineActivity,
-    getRoutineActivityById,
-    getRoutineById
+    client
 } = require('../db');
 
-// **
 routineActivitiesRouter.patch('/:routineActivityId', requireUser, async (req, res, next) =>{
     try{
+        
+        const {rows: [routineActivity]} = await client.query(`
+            SELECT routine_activities."routineId" AS routineActivitiesId, routines.id AS "routineId", routines."creatorId"
+            FROM routine_activities
+            JOIN routines ON routine_activities."routineId" = routines.id
+            WHERE routines."creatorId" = $1 AND routine_activities.id = $2;
+        `, [req.user.id, req.params.routineActivityId]);
 
-        const routine_activity = await getRoutineActivityById(req.params.routineActivityId)
-        const routine = await getRoutineById(routine_activity.routineId)
-        if(routine.creatorId === req.user.id) {
+        if(routineActivity.creatorId === req.user.id){
             const updatedRoutineActivity = await updateRoutineActivity({id: req.params.routineActivityId, count: req.body.count, duration: req.body.duration});
             res.send(updatedRoutineActivity);
-        } else {
-            next({
-                name: "NotAuthorizedError",
-                message: "Must be authorized to update routine activity"
-            })
         }
 
-    }catch({name, message}){
-       next({name, message});
+    }catch(error){
+       next(error);
     }
 });
 
-// **
 routineActivitiesRouter.delete('/:routineActivityId', requireUser, async (req, res, next) =>{
     try{
-        const routine_activity = await getRoutineActivityById(req.params.routineActivityId)
-        const routine = await getRoutineById(routine_activity.routineId)
-        if(routine.creatorId === req.user.id) {
-            const destroyedRoutineActivity = await destroyRoutineActivity(req.params.routineActivityId);
-            res.send(destroyedRoutineActivity)
-        } else {
-            next({
-                name: "NotAuthorizedError",
-                message: "Must be authorized to update routine activity"
-            })
-        }
 
-    }catch({name, message}){
-       next({name, message});
+        const {rows: [routineActivity]} = await client.query(`
+            SELECT routine_activities."routineId" AS routineActivitiesId, routines.id AS "routineId", routines."creatorId"
+            FROM routine_activities
+            JOIN routines ON routine_activities."routineId" = routines.id
+            WHERE routines."creatorId" = $1 AND routine_activities.id = $2;
+        `, [req.user.id, req.params.routineActivityId]);
+
+        if(routineActivity.creatorId === req.user.id){
+            const destroyedRoutineActivity = await destroyRoutineActivity(req.params.routineActivityId);
+            res.send(destroyedRoutineActivity);
+        }
+    }catch(error){
+       next(error);
     }
 });
 

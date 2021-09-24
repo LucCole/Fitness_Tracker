@@ -10,7 +10,6 @@ const {
     getPublicRoutinesByActivity
 } = require('../db');
 
-// Y
 activitiesRouter.get('/', async (req, res, next) =>{
     try{
         const activities = await getAllActivities();
@@ -20,7 +19,6 @@ activitiesRouter.get('/', async (req, res, next) =>{
     }
 });
 
-// *
 activitiesRouter.post('/', requireUser, async (req, res, next) =>{
     try{
         const activitiy = await createActivity(req.body);
@@ -30,7 +28,6 @@ activitiesRouter.post('/', requireUser, async (req, res, next) =>{
     }
 });
 
-// *
 activitiesRouter.patch('/:activityId', requireUser, async (req, res, next) =>{
     try{
         const activitiy = await updateActivity({id: req.params.activityId, name: req.body.name, description: req.body.description});
@@ -40,7 +37,6 @@ activitiesRouter.patch('/:activityId', requireUser, async (req, res, next) =>{
     }
 });
 
-// ?? was using req.body and still worked
 activitiesRouter.get('/:activityId/routines', async (req, res, next) =>{
     try{
 

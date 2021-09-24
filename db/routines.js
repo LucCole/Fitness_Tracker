@@ -1,5 +1,4 @@
 const { client } = require('./client');
-const { existingFieldsToString } = require('./utils');
 
 async function getRoutineById(id){
     try{
@@ -34,7 +33,7 @@ async function getAllRoutines(){
     try{
 
         const { rows: routines } = await client.query(`
-            SELECT *, username AS "creatorName"
+            SELECT routines.*, username AS "creatorName", users.id AS "creatorId"
             FROM routines
             JOIN users ON routines."creatorId" = users.id
         `);
@@ -61,7 +60,7 @@ async function getAllPublicRoutines(){
     try{
 
         const { rows: routines } = await client.query(`
-            SELECT *, username AS "creatorName"
+            SELECT routines.*, username AS "creatorName", users.id AS "creatorId"
             FROM routines
             JOIN users ON routines."creatorId" = users.id
             WHERE "isPublic"=true;
@@ -89,7 +88,7 @@ async function getAllRoutinesByUser({ username }){
     try{
 
         const { rows: routines } = await client.query(`
-            SELECT *, username AS "creatorName"
+            SELECT routines.*, username AS "creatorName", users.id AS "creatorId"
             FROM routines
             JOIN users ON routines."creatorId" = users.id
             WHERE users.username = '${username}';
@@ -116,7 +115,7 @@ async function getPublicRoutinesByUser({ username }){
     try{
         
         const { rows: routines } = await client.query(`
-            SELECT routines.*, username AS "creatorName"
+            SELECT routines.*, username AS "creatorName", users.id AS "creatorId"
             FROM routines
             JOIN users ON routines."creatorId" = users.id
             WHERE users.username='${username}'
@@ -144,18 +143,14 @@ async function getPublicRoutinesByUser({ username }){
 async function getPublicRoutinesByActivity({ id }){
     try{
 
-        console.log(id);
-
         const { rows: routines } = await client.query(`
-            SELECT routines.*, users.id, username AS "creatorName"
+            SELECT routines.*, username AS "creatorName", users.id AS "creatorId"
             FROM routines
             JOIN users ON routines."creatorId" = users.id
             JOIN routine_activities ON routine_activities."routineId" = routines.id
             WHERE "isPublic" = true
             AND routine_activities."activityId" = $1;
         `, [id]);
-
-        console.log('postman routines: ',routines);
 
         for (const routine of routines) {
             const { rows: activities } = await client.query(`
@@ -193,15 +188,24 @@ async function createRoutine({ creatorId, isPublic, name, goal }){
 async function updateRoutine({ id, isPublic, name, goal }){
     try{
 
-        const queryParams = existingFieldsToString({isPublic, name, goal});
-        queryParams.values.unshift(id);
+        const setArr = [];
+        if(isPublic !== undefined){
+            setArr.push(`"isPublic"=${isPublic}`);
+        }
+        if(name){
+            setArr.push(`name='${name}'`);
+        }
+        if(goal){
+            setArr.push(`goal='${goal}'`);
+        }
+        const setStr = setArr.toString();
 
         const { rows: [ routine ] } = await client.query(`
             UPDATE routines 
-            SET ${queryParams.insert}
+            SET ${setStr}
             WHERE id=$1
             RETURNING *;
-        `, queryParams.values);
+        `, [id]);
 
         return routine;
     }catch(error){
@@ -209,7 +213,6 @@ async function updateRoutine({ id, isPublic, name, goal }){
     }
 }
 
-// creatorId ??
 async function destroyRoutine(id){
     try{
 
